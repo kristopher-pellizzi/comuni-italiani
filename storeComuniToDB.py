@@ -10,7 +10,8 @@ try:
     connection = psycopg2.connect(
                                   host="127.0.0.1",
                                   port="5432",
-                                  database="comuni")
+                                  database="comuni",
+                                  user="postgres")
     print("Connection with DB opened")
     cursor = connection.cursor()
 
@@ -44,18 +45,18 @@ try:
                 cursor.execute("SELECT id FROM province WHERE name = %s AND regione = %s", (listProvince[j], regionID))
                 provinceID = cursor.fetchone()[0]
                 # Get all comuni of province X
-                listComuni = list(set(map(
-                    lambda jsonOb: jsonOb['Comune'],
-                    list(filter(lambda jsonOb: jsonOb['Provincia'] == listProvince[j], jsonObLst)))))
+                listComuni = list(map(
+                    lambda jsonOb: {'name': jsonOb['Comune'], 'codice': jsonOb['Codice Catastale']},
+                    list(filter(lambda jsonOb: jsonOb['Provincia'] == listProvince[j], jsonObLst))))
 
                 for k in range(len(listComuni)):
-                    cursor.execute("SELECT name FROM comuni WHERE name = %s AND provincia = %s", (listComuni[k], provinceID))
+                    cursor.execute("SELECT name FROM comuni WHERE name = %s AND provincia = %s", (listComuni[k]['name'], provinceID))
                     if cursor.rowcount == 0:
-                        cursor.execute("INSERT INTO comuni (name, provincia) VALUES (%s, %s)", (listComuni[k], provinceID))
+                        cursor.execute("INSERT INTO comuni (name, provincia, codice) VALUES (%s, %s, %s)", (listComuni[k]['name'], provinceID, listComuni[k]['codice']))
                         connection.commit()
                         print("Transaction Committed")
                     else:
-                        print("Comune", listComuni[k], "already in DB")
+                        print("Comune", listComuni[k]['name'], "already in DB")
 
     except TypeError as error:
         print("Error occurred: ", error)
