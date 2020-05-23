@@ -11,4 +11,6 @@ The repository also includes 2 python3 scripts:
 ***NOTE:* the script uses a path on the local machine. The path should be changed in order to work properly**
 - *storeComuniToDB.py*: tries to connect to a **local** instance of postgresql DB and stores 3 tables (regioni, province, comuni) in the database (called comuni).
 
-*comuni-italiani-short.json* is a json file obtained from the data stored in comuni-italiani.json. It is a subset of those information, only including triplets of type (regione, provincia, comune, codiceCatastale)
+*comuni-italiani-short.json* is a json file obtained from the data stored in comuni-italiani.json. It is a subset of those information, only including triplets of type (regione, provincia, comune, codiceCatastale).
+
+***NOTE:* codiceCatastale is an information required in order to verify the correctness of an Italian fiscal code if personal data of a person are already provided (e.g. through a registration form)**
